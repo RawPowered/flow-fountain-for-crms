@@ -1,3 +1,9 @@
+# Flow Fountain for CRMs — 0.1.2
+
+- Established package metadata as the product version authority.
+- Added release checks for package, lockfile, and manifest consistency.
+- Archive names now derive from package metadata; documented independent schema and API versions.
+
 # Flow Fountain for CRMs — 0.1.1
 
 - Renamed the project and repository to Flow Fountain for CRMs.

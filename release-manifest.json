@@ -48,6 +48,7 @@
     "content/docs/vibe-song-migration-prompt.md",
     "docs/INSTALLATION.md",
     "docs/SCREENSHOTS.md",
+    "docs/VERSIONING.md",
     "docs/assets/fountain-hero.svg",
     "docs/assets/fountain-mark.svg",
     "docs/assets/license.svg",
@@ -325,5 +326,7 @@
       "sha256": "8fbf404a75cfd6195540a6689f218bc84d64623dcb21f16bc8a2a642da4a3c86",
       "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
     }
-  }
+  },
+  "product": "Flow Fountain for CRMs",
+  "version": "0.1.2"
 }

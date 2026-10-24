@@ -15,7 +15,7 @@ Self-hosted workflows, integrations, operational analytics, and audit trails.</p
 </p>
 
 <p align="center">
-  <a href="https://github.com/RawPowered/flow-fountain-for-crms/releases/tag/v0.1.1"><strong>Download</strong></a> ·
+  <a href="https://github.com/RawPowered/flow-fountain-for-crms/releases/tag/v0.1.2"><strong>Download</strong></a> ·
   <a href="#product-tour">Product tour</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="docs/INSTALLATION.md">Installation guide</a> ·
@@ -25,6 +25,8 @@ Self-hosted workflows, integrations, operational analytics, and audit trails.</p
 <p align="center">
   <img src="docs/assets/fountain-hero.svg" alt="Flow Fountain for CRMs connects operator-configured sources, analyst review, and preservation. Project illustration." width="100%">
 </p>
+
+Current release: **v0.1.2 (preview)**. [Product and compatibility versions](docs/VERSIONING.md).
 
 ## Give your CRM a connected workflow
 

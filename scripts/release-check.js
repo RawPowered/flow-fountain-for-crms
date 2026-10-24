@@ -56,6 +56,17 @@ function validateRelease(root = ROOT) {
   const files = manifest.files;
   const media = manifest.documentationMedia || {};
   const errors = [];
+  // The package owns the public product identity; locks and release metadata must agree.
+  if (fs.existsSync(path.join(root, 'package.json'))) {
+    const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+    const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
+    if (!/^\d+\.\d+\.\d+$/.test(pkg.version)) errors.push('Product version must use major.minor.patch');
+    if (pkg.name !== 'flow-fountain-for-crms') errors.push('Unexpected public package name');
+    for (const entry of [lock, lock.packages?.['']]) {
+      if (entry?.name !== pkg.name || entry?.version !== pkg.version) errors.push('Package lock identity/version mismatch');
+    }
+    if (manifest.product !== 'Flow Fountain for CRMs' || manifest.version !== pkg.version) errors.push('Release manifest product/version mismatch');
+  }
   if (!Array.isArray(files) || !files.length || new Set(files).size !== files.length) throw new Error('Invalid release manifest');
   const secretPattern = /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----|\b(?:AKIA|ASIA)[A-Z0-9]{16}\b|\bgh[pousr]_[A-Za-z0-9]{30,}|\bgithub_pat_[A-Za-z0-9_]{30,}|\bsk-(?:proj-)?[A-Za-z0-9_-]{24,}|\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/;
   for (const file of files) {

@@ -1,6 +1,6 @@
 {
   "name": "flow-fountain-for-crms",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Self-hosted CRM workflow and integration platform, originally built for GoHighLevel and adaptable to other API-enabled CRMs",
   "main": "server.js",
   "scripts": {

@@ -63,7 +63,21 @@ try {
   assert.equal(isLocalDeployment(), true);
   process.env.HOST = '0.0.0.0';
   assert.equal(isLocalDeployment(), false);
-  console.log('Release privacy guard and blank adapter defaults passed');
+  // A partial version bump must block source packaging.
+  const versionRoot = path.join(temp, 'version-contract');
+  fs.mkdirSync(versionRoot);
+  const versionFiles = ['.env.example', 'package.json', 'package-lock.json', 'release-manifest.json'];
+  fs.writeFileSync(path.join(versionRoot, '.env.example'), 'SESSION_SECRET=\n');
+  const pkg = {name:'flow-fountain-for-crms', version:'0.1.2'};
+  const lock = {...pkg, packages:{'':{...pkg}}};
+  fs.writeFileSync(path.join(versionRoot, 'package.json'), JSON.stringify(pkg));
+  fs.writeFileSync(path.join(versionRoot, 'package-lock.json'), JSON.stringify(lock));
+  fs.writeFileSync(path.join(versionRoot, 'release-manifest.json'), JSON.stringify({product:'Flow Fountain for CRMs',version:pkg.version,files:versionFiles}));
+  assert.deepEqual(validateRelease(versionRoot), versionFiles);
+  lock.packages[''].version = '9.9.9';
+  fs.writeFileSync(path.join(versionRoot, 'package-lock.json'), JSON.stringify(lock));
+  assert.throws(() => validateRelease(versionRoot), /lock identity\/version mismatch/);
+  console.log('Release privacy, version consistency, and blank adapter defaults passed');
 } finally {
   // Only this freshly created test-owned temporary directory is removed.
   fs.rmSync(temp, {recursive: true, force: true});
