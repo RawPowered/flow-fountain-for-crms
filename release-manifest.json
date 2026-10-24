@@ -46,6 +46,18 @@
     "content/docs/users.md",
     "content/docs/vibe-integration.md",
     "content/docs/vibe-song-migration-prompt.md",
+    "docs/INSTALLATION.md",
+    "docs/SCREENSHOTS.md",
+    "docs/assets/fountain-hero.svg",
+    "docs/assets/fountain-mark.svg",
+    "docs/assets/license.svg",
+    "docs/assets/platforms.svg",
+    "docs/assets/preview.svg",
+    "docs/assets/screenshots/blank-installation.png",
+    "docs/assets/screenshots/evidence-preservation.png",
+    "docs/assets/screenshots/python-console.png",
+    "docs/assets/screenshots/sentinel-overview.png",
+    "docs/assets/screenshots/workflow-designer.png",
     "package-lock.json",
     "package.json",
     "parrot/README.md",
@@ -291,5 +303,27 @@
     "test/servicePools.test.js",
     "test/song.test.js",
     "test/telemetryIdentity.test.js"
-  ]
+  ],
+  "documentationMedia": {
+    "docs/assets/screenshots/blank-installation.png": {
+      "sha256": "a88022df364ae8bd9cf883d313d4d35bed955efe051a7874f3812287826a0cc5",
+      "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
+    },
+    "docs/assets/screenshots/evidence-preservation.png": {
+      "sha256": "844e9ea2faa2433f6b74409ab9e8246be110b40c7e3eea158b202ce115f5aa06",
+      "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
+    },
+    "docs/assets/screenshots/python-console.png": {
+      "sha256": "63dc3e367315728a717aa3b63ead909af9235f1b5fd2a56a02390afacd1d9bf7",
+      "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
+    },
+    "docs/assets/screenshots/sentinel-overview.png": {
+      "sha256": "fbf8bb17034ab8bec6621327deb533f320444067accf96add85af3070ef74ca9",
+      "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
+    },
+    "docs/assets/screenshots/workflow-designer.png": {
+      "sha256": "8fbf404a75cfd6195540a6689f218bc84d64623dcb21f16bc8a2a642da4a3c86",
+      "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
+    }
+  }
 }

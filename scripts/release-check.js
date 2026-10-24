@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { createHash } = require('crypto');
 
 const ROOT = path.resolve(__dirname, '..');
 const PUBLIC_HOSTS = new Set([
@@ -25,8 +26,35 @@ function entropy(value) {
   return [...counts.values()].reduce((sum, count) => sum - count / value.length * Math.log2(count / value.length), 0);
 }
 
+function reviewedScreenshot(file, bytes, media) {
+  const entry = media[file];
+  if (!/^docs\/assets\/screenshots\/[a-z0-9-]+\.png$/.test(file) ||
+      !entry || !/^[a-f0-9]{64}$/.test(entry.sha256 || '')) return 'PNG is not an approved documentation screenshot';
+  if (createHash('sha256').update(bytes).digest('hex') !== entry.sha256) return 'screenshot differs from its reviewed hash';
+  if (bytes.length < 45 || bytes.length > 8 * 1024 * 1024 ||
+      !bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) ||
+      bytes.toString('ascii', 12, 16) !== 'IHDR') return 'invalid screenshot PNG';
+  const width = bytes.readUInt32BE(16), height = bytes.readUInt32BE(20);
+  if (width < 320 || height < 240 || width > 4096 || height > 4096) return 'screenshot dimensions are outside review bounds';
+  const allowed = new Set(['IHDR', 'IDAT', 'IEND', 'sRGB', 'gAMA', 'cHRM', 'pHYs', 'bKGD']);
+  let offset = 8, ended = false, pixels = false;
+  while (offset + 12 <= bytes.length) {
+    const size = bytes.readUInt32BE(offset);
+    const type = bytes.toString('ascii', offset + 4, offset + 8);
+    if (!allowed.has(type)) return 'screenshot contains unreviewed metadata';
+    if (offset + size + 12 > bytes.length) return 'truncated screenshot PNG';
+    if (type === 'IDAT') pixels = true;
+    offset += size + 12;
+    if (type === 'IEND') { ended = true; break; }
+  }
+  if (!ended || !pixels || offset !== bytes.length) return 'invalid screenshot PNG structure';
+  return null;
+}
+
 function validateRelease(root = ROOT) {
-  const files = JSON.parse(fs.readFileSync(path.join(root, 'release-manifest.json'), 'utf8')).files;
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'release-manifest.json'), 'utf8'));
+  const files = manifest.files;
+  const media = manifest.documentationMedia || {};
   const errors = [];
   if (!Array.isArray(files) || !files.length || new Set(files).size !== files.length) throw new Error('Invalid release manifest');
   const secretPattern = /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----|\b(?:AKIA|ASIA)[A-Z0-9]{16}\b|\bgh[pousr]_[A-Za-z0-9]{30,}|\bgithub_pat_[A-Za-z0-9_]{30,}|\bsk-(?:proj-)?[A-Za-z0-9_-]{24,}|\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/;
@@ -36,13 +64,18 @@ function validateRelease(root = ROOT) {
     }
     if (/(?:^|\/)(?:node_modules|var|tmp|output|dist|\.git|\.agents|\.cursor|~[^/]*)(?:\/|$)/.test(file) ||
         /(?:^|\/)\.env(?:\.|$)/.test(file) && file !== '.env.example' ||
-        /\.(?:zip|pem|key|p12|pfx|log|sqlite|db|png|webp|pdf)$/i.test(file)) {
+        /\.(?:zip|pem|key|p12|pfx|log|sqlite|db|webp|pdf)$/i.test(file)) {
       errors.push(`${file}: prohibited release file`); continue;
     }
     const fullPath = path.resolve(root, file);
     let info;
     try { info = fs.lstatSync(fullPath); } catch { errors.push(`${file}: missing file`); continue; }
     if (!info.isFile() || info.isSymbolicLink()) { errors.push(`${file}: expected a regular file`); continue; }
+    if (/\.png$/i.test(file)) {
+      const error = reviewedScreenshot(file, fs.readFileSync(fullPath), media);
+      if (error) errors.push(`${file}: ${error}`);
+      continue;
+    }
     const source = fs.readFileSync(fullPath, 'utf8');
     if (secretPattern.test(source)) errors.push(`${file}: possible credential or private key`);
     for (const match of source.matchAll(/https?:\/\/(?:[^\s/"'`<>@]+@)?([a-zA-Z0-9.-]+)/g)) {
