@@ -1,21 +1,21 @@
 <p align="center">
-  <img src="docs/assets/fountain-mark.svg" alt="Fountain" width="78">
+  <img src="docs/assets/fountain-mark.svg" alt="Flow Fountain for CRMs" width="78">
 </p>
 
-<h1 align="center">Fountain</h1>
+<h1 align="center">Flow Fountain for CRMs</h1>
 
-<p align="center"><strong>OSINT Research Studio 360</strong><br>
-A self-hosted workspace for research workflows, investigation review, and evidence preservation.</p>
+<p align="center"><strong>Keep your CRM work flowing.</strong><br>
+Self-hosted workflows, integrations, operational analytics, and audit trails.</p>
 
 <p align="center">
   <a href="docs/INSTALLATION.md"><img src="docs/assets/platforms.svg" alt="Windows and Linux" height="28"></a>
   <a href="LICENSE"><img src="docs/assets/license.svg" alt="GPL v3 license" height="28"></a>
-  <a href="RELEASE_NOTES.md"><img src="docs/assets/preview.svg" alt="Research preview" height="28"></a>
-  <a href="https://github.com/RawPowered/osint-research-studio-360-fountain/actions/workflows/ci.yml"><img src="https://github.com/RawPowered/osint-research-studio-360-fountain/actions/workflows/ci.yml/badge.svg" alt="Windows and Linux checks" height="28"></a>
+  <a href="RELEASE_NOTES.md"><img src="docs/assets/preview.svg" alt="Project preview" height="28"></a>
+  <a href="https://github.com/RawPowered/flow-fountain-for-crms/actions/workflows/ci.yml"><img src="https://github.com/RawPowered/flow-fountain-for-crms/actions/workflows/ci.yml/badge.svg" alt="Windows and Linux checks" height="28"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/RawPowered/osint-research-studio-360-fountain/releases/tag/v0.1.0"><strong>Download</strong></a> ·
+  <a href="https://github.com/RawPowered/flow-fountain-for-crms/releases/tag/v0.1.1"><strong>Download</strong></a> ·
   <a href="#product-tour">Product tour</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="docs/INSTALLATION.md">Installation guide</a> ·
@@ -23,25 +23,27 @@ A self-hosted workspace for research workflows, investigation review, and eviden
 </p>
 
 <p align="center">
-  <img src="docs/assets/fountain-hero.svg" alt="Fountain connects operator-configured sources, analyst review, and preservation. Project illustration." width="100%">
+  <img src="docs/assets/fountain-hero.svg" alt="Flow Fountain for CRMs connects operator-configured sources, analyst review, and preservation. Project illustration." width="100%">
 </p>
 
-## Give your research a repeatable process
+## Give your CRM a connected workflow
 
-Fountain brings workflow authoring, investigation review, audit records, and export preparation into a configurable workspace. Connect approved data sources, arrange the steps your team needs, and keep the operational trail available for review.
+**Originally built for GoHighLevel CRM, Flow Fountain for CRMs can be adapted to any API-enabled CRM.** It combines visual workflow authoring, integration controls, operational analytics, security review, and evidence preservation in a self-hosted workspace.
 
-The project combines research foundations with optional CRM and operational modules. Every installation begins with its own configuration: no deployment domains, credentials, saved targets, customer mappings, or research searches are bundled.
+GoHighLevel / LeadConnector is the original CRM integration. Adapting another CRM requires configuring or extending its authentication, API endpoints, field mappings, and webhook behavior. HTTP, SQL, and optional Python integrations provide the building blocks for that work.
+
+Every installation begins with its own configuration: no deployment domains, credentials, customer mappings, saved targets, or searches are bundled.
 
 | Build a workflow | Review the context | Preserve the trail |
 |:---|:---|:---|
 | Arrange triggers, conditions, and actions in a visual editor. Add reviewed Python processing when needed. | Inspect security events, findings, case activity, and playbooks in a dedicated console. | Define scoped exports, version the mappings, and track preservation jobs and delivery evidence. |
 
 > [!IMPORTANT]
-> **Research preview.** Source releases are available for Windows and Linux under GPL v3. Automated checks run on both platforms with Node.js 22 and 24. A full installation against a live MySQL server and external integration acceptance checks remain unverified. Read the [release notes](RELEASE_NOTES.md) before deployment.
+> **Project preview.** Source releases are available for Windows and Linux under GPL v3. Automated checks run on both platforms with Node.js 22 and 24. A full installation against a live MySQL server and external integration acceptance checks remain unverified. Read the [release notes](RELEASE_NOTES.md) before deployment.
 
 ## Product tour
 
-These are browser captures of Fountain's real interface. The workspace screens use an isolated preview with **fictional data and mocked API responses**; they illustrate the interface rather than completed live operations. The installer capture shows the blank setup screen. Preview records and illustration assets do not configure a fresh installation.
+These are browser captures of Flow Fountain for CRMs's real interface. The workspace screens use an isolated preview with **fictional data and mocked API responses**; they illustrate the interface rather than completed live operations. The installer capture shows the blank setup screen. Preview records and illustration assets do not configure a fresh installation.
 
 ### Design the steps before you run them
 
@@ -60,7 +62,7 @@ HAWK provides a visual workspace for triggers, conditions, actions, and executio
   </tr>
   <tr>
     <td width="50%" valign="top"><strong>Compose reviewed Python operations</strong><br><sub>PARROT exposes registered handlers, input contracts, dry-run controls, and run history.</sub><br><br><a href="docs/assets/screenshots/python-console.png"><img src="docs/assets/screenshots/python-console.png" alt="PARROT console with an offline text-normalization example and the bridge explicitly not configured" width="100%"></a></td>
-    <td width="50%" valign="top"><strong>Start with your own configuration</strong><br><sub>The installer asks for your database and administrator account. Connection credentials begin empty.</sub><br><br><a href="docs/assets/screenshots/blank-installation.png"><img src="docs/assets/screenshots/blank-installation.png" alt="Blank Fountain installer with empty database user, password, and database name fields" width="100%"></a></td>
+    <td width="50%" valign="top"><strong>Start with your own configuration</strong><br><sub>The installer asks for your database and administrator account. Connection credentials begin empty.</sub><br><br><a href="docs/assets/screenshots/blank-installation.png"><img src="docs/assets/screenshots/blank-installation.png" alt="Blank Flow Fountain for CRMs installer with empty database user, password, and database name fields" width="100%"></a></td>
   </tr>
 </table>
 
@@ -79,13 +81,13 @@ HAWK provides a visual workspace for triggers, conditions, actions, and executio
 | **SONG** | Conditional script authoring, publishing, version selection, and runtime events. |
 | **Integration controls** | Operator-configured SQL, HTTP, and CRM connections with scoped grants and credential references. |
 
-The modules are available as building blocks. Enable and configure the parts that fit your own research and operational process.
+The modules are available as building blocks. Enable and configure the parts that fit your CRM and operational process.
 
 ## How it fits together
 
 ```mermaid
 flowchart LR
-    USER[Researcher or analyst] --> APP[Fountain control plane]
+    USER[CRM operator or team] --> APP[Flow Fountain for CRMs control plane]
     APP --> REVIEW[Investigation and event review]
     APP --> FLOW[Workflow authoring]
     APP --> EXPORT[Preservation definitions]
@@ -106,7 +108,7 @@ Public provider addresses remain in adapters where their protocols or allowlists
 
 ## Quick start
 
-**You will need:** Windows or Linux, Node.js 22 or 24, and a running MySQL 8 database. Python 3.12+ is optional for the Python bridge. Download the source ZIP from the [releases page](https://github.com/RawPowered/osint-research-studio-360-fountain/releases) and extract it first.
+**You will need:** Windows or Linux, Node.js 22 or 24, and a running MySQL 8 database. Python 3.12+ is optional for the Python bridge. Download the source ZIP from the [releases page](https://github.com/RawPowered/flow-fountain-for-crms/releases) and extract it first.
 
 ### Windows · PowerShell
 
@@ -150,7 +152,7 @@ For an HTTPS server deployment, configure production mode, secure cookies, the p
 | [Installation and operations](docs/INSTALLATION.md) | [Module and API documentation](content/docs/index.md) |
 | [Release notes and current limitations](RELEASE_NOTES.md) | [Optional Python bridge](parrot/README.md) |
 | [Screenshot provenance](docs/SCREENSHOTS.md) | [Third-party notices](THIRD_PARTY_NOTICES.md) |
-| [GPL v3 license](LICENSE) | [Windows and Linux checks](https://github.com/RawPowered/osint-research-studio-360-fountain/actions) |
+| [GPL v3 license](LICENSE) | [Windows and Linux checks](https://github.com/RawPowered/flow-fountain-for-crms/actions) |
 
 To validate a checkout:
 
@@ -161,8 +163,8 @@ npm run release:check
 npm run release:pack
 ```
 
-Use Fountain with data and systems you are authorized to access. Public issues should describe reproducible behavior without including credentials, personal records, or private evidence.
+Use Flow Fountain for CRMs with data and systems you are authorized to access. Public issues should describe reproducible behavior without including credentials, personal records, or private evidence.
 
 ---
 
-<p align="center"><img src="docs/assets/fountain-mark.svg" alt="" width="36"><br><strong>Fountain</strong><br><sub>Your sources. Your configuration. Your research process.</sub></p>
+<p align="center"><img src="docs/assets/fountain-mark.svg" alt="" width="36"><br><strong>Flow Fountain for CRMs</strong><br><sub>Your CRM. Your workflows. Your configuration.</sub></p>

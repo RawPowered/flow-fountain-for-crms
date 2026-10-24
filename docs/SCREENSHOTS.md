@@ -3,7 +3,7 @@
 [Return to the product tour](../README.md#product-tour)
 
 The documentation images were captured on October 24, 2026 from the clean public
-source version of Fountain. They show the existing application interface in a
+source version of Flow Fountain for CRMs. They show the existing application interface in a
 local, isolated browser preview. The preview did not connect to a database,
 production installation, or external integration.
 

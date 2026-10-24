@@ -1,6 +1,6 @@
 # Installation and operations
 
-[Return to Fountain](../README.md)
+[Return to Flow Fountain for CRMs](../README.md)
 
 ## Requirements
 

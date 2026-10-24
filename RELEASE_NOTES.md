@@ -1,4 +1,13 @@
-# OSINT Research Studio 360: Fountain — 0.1.0
+# Flow Fountain for CRMs — 0.1.1
+
+- Renamed the project and repository to Flow Fountain for CRMs.
+- Clarified that it was originally built for GoHighLevel / LeadConnector and can be adapted to other API-enabled CRMs through integration work.
+- Updated the README, project artwork, package metadata, links, and source archive names.
+- Retained blank installation settings, existing functionality, and GPL v3 licensing.
+
+This is a project rename and positioning update. The preview limitations below still apply.
+
+## Initial 0.1.0 preview
 
 Initial GPL v3 research preview for Windows and Linux.
 

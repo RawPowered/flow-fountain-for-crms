@@ -1,6 +1,6 @@
 # Third-party notices
 
-Fountain is licensed under GPL v3. Third-party software keeps its own licenses.
+Flow Fountain for CRMs is licensed under GPL v3. Third-party software keeps its own licenses.
 
 Dependencies and exact versions are recorded in `package-lock.json`. Run `npm ci`
 to obtain their license files in `node_modules`. This release does not redistribute

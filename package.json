@@ -1,7 +1,7 @@
 {
-  "name": "osint-research-studio-360-fountain",
-  "version": "0.1.0",
-  "description": "Self-hosted OSINT research, evidence preservation and investigation workbench",
+  "name": "flow-fountain-for-crms",
+  "version": "0.1.1",
+  "description": "Self-hosted CRM workflow and integration platform, originally built for GoHighLevel and adaptable to other API-enabled CRMs",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
