@@ -1,0 +1,34 @@
+# Runtime configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+credentials*
+secrets*
+# Installed dependencies, local data and outputs
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+var/
+tmp/
+output/
+dist/
+coverage/
+*.log
+*.sqlite*
+*.db
+*.zip
+*.tar.gz
+*.sql.gz
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+.agents/

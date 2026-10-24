@@ -1,0 +1,30 @@
+name: Windows and Linux checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        node: ['22', '24']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:python
+      - run: npm run release:check
+      - run: npm run release:pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: source-${{ matrix.os }}-node${{ matrix.node }}
+          path: dist/*.zip

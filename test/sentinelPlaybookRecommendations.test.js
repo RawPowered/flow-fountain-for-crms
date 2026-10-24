@@ -1,0 +1,12 @@
+const assert=require('assert/strict');
+const {scorePlaybook}=require('../src/services/sentinelPlaybookRecommendations');
+const book=(slug,entities=[])=>({id:slug,slug,name:slug,requiredEntities:entities});
+const pathCase={ruleId:'new_path_errors',entityType:'path',entity:'POST /api/test',severity:'medium',title:'High-error API path',summary:'409 responses'};
+const pathMatch=scorePlaybook(book('high-error-path',['path']),pathCase);
+assert.equal(pathMatch.score,100);assert.equal(pathMatch.confidence,'high');assert.ok(pathMatch.reasons.some((reason)=>reason.includes('new_path_errors')));
+const compliance=scorePlaybook(book('compliance-denial',['path']),{...pathCase,ruleId:'other',disposition:'expected_behavior'});
+assert.ok(compliance.score>=90);assert.ok(compliance.reasons.some((reason)=>reason.includes('compliance')));
+const auth=scorePlaybook(book('auth-failure-burst',['identity']),{ruleId:'login_fail_identity',entityType:'identity',severity:'high',title:'Failures',summary:''});
+assert.equal(auth.score,90);
+const unrelated=scorePlaybook(book('malicious-ip',['ip']),pathCase);assert.equal(unrelated.score,0);
+console.log('Sentinel case playbook recommendation tests passed');

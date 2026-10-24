@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Install · Research Studio</title>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Research Studio</a>
+    <nav class="topbar-nav"><span class="muted">Installer</span></nav>
+  </header>
+
+  <main class="container container-sm">
+    <h1>Install Research Studio</h1>
+    <p class="muted">Connect MySQL, create your admin login, and lock the installer.</p>
+
+    <div class="steps">
+      <span class="step-pill active" data-step="1">1. Database</span>
+      <span class="step-pill" data-step="2">2. Admin</span>
+      <span class="step-pill" data-step="3">3. Finish</span>
+    </div>
+
+    <div id="alert" hidden></div>
+
+    <!-- Step 1 -->
+    <div class="card" id="step1">
+      <h2>MySQL connection</h2>
+      <label for="host">Host</label>
+      <input id="host" type="text" value="127.0.0.1" autocomplete="off" />
+
+      <label for="port">Port</label>
+      <input id="port" type="number" value="3306" />
+
+      <label for="user">User</label>
+      <input id="user" type="text" autocomplete="off" />
+
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="new-password" />
+
+      <label for="database">Database name</label>
+      <input id="database" type="text" placeholder="workbench_api" autocomplete="off" />
+
+      <label class="checkbox-row">
+        <input id="createDatabase" type="checkbox" checked />
+        Create database if it does not exist
+      </label>
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button type="button" class="btn btn-secondary" id="btnTest">Test connection</button>
+        <button type="button" class="btn btn-primary" id="btnNext1" disabled>Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="card" id="step2" hidden>
+      <h2>Admin account</h2>
+      <p class="muted small">This login walls the admin portal, API key management, and documentation.</p>
+
+      <label for="adminUsername">Username</label>
+      <input id="adminUsername" type="text" autocomplete="username" />
+
+      <label for="adminEmail">Email (optional)</label>
+      <input id="adminEmail" type="email" autocomplete="email" />
+
+      <label for="adminPassword">Password (min 8 characters)</label>
+      <input id="adminPassword" type="password" autocomplete="new-password" />
+
+      <label for="adminPassword2">Confirm password</label>
+      <input id="adminPassword2" type="password" autocomplete="new-password" />
+
+      <label class="checkbox-row">
+        <input id="createFirstApiKey" type="checkbox" />
+        Create a first Dialer API key after install
+      </label>
+
+      <label for="firstKeyName">First key name</label>
+      <input id="firstKeyName" type="text" value="Research API Key" />
+
+      <hr style="margin:1.5rem 0;border:0;border-top:1px solid var(--border)" />
+      <h2>External instance identity</h2>
+      <p class="muted small">Optional overrides. Leave fields blank to generate unique, non-product identifiers for this installation.</p>
+
+      <label for="apiDisplayName">API display name</label>
+      <input id="apiDisplayName" type="text" value="Private API" maxlength="80" />
+
+      <label for="publicApiBasePath">Public API base path</label>
+      <input id="publicApiBasePath" type="text" placeholder="Generated automatically, or /your-private-path" autocomplete="off" />
+
+      <label for="webhookBasePath">Webhook base path</label>
+      <input id="webhookBasePath" type="text" placeholder="Generated automatically" autocomplete="off" />
+
+      <label for="healthPath">Health-check path</label>
+      <input id="healthPath" type="text" placeholder="Generated automatically" autocomplete="off" />
+
+      <label for="apiKeyPrefix">API key prefix</label>
+      <input id="apiKeyPrefix" type="text" placeholder="Generated automatically, or your custom prefix" maxlength="16" autocomplete="off" />
+
+      <label for="automationNamespace">Automation action namespace</label>
+      <input id="automationNamespace" type="text" placeholder="Generated automatically, or your custom namespace" maxlength="24" autocomplete="off" />
+
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button type="button" class="btn btn-secondary" id="btnBack2">Back</button>
+        <button type="button" class="btn btn-primary" id="btnInstall">Install</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="card" id="step3" hidden>
+      <h2>Installation complete</h2>
+      <p class="muted">Bookmark these secrets now. The public site will not link to the admin panel.</p>
+      <div class="alert alert-warning">Copy the admin URL — it is obfuscated and not shown again after you leave this page.</div>
+      <label>Admin login URL (bookmark this)</label>
+      <div class="secret-box" id="adminUrlValue"></div>
+      <button type="button" class="btn btn-secondary btn-sm" id="btnCopyAdmin">Copy admin URL</button>
+      <div id="instanceIdentityReveal" hidden style="margin-top:1.25rem">
+        <label>Public API base URL</label>
+        <div class="secret-box" id="apiBaseUrlValue"></div>
+        <label>Webhook base URL</label>
+        <div class="secret-box" id="webhookBaseUrlValue"></div>
+        <label>Health-check URL</label>
+        <div class="secret-box" id="healthUrlValue"></div>
+        <label>Automation namespace</label>
+        <div class="secret-box" id="automationNamespaceValue"></div>
+      </div>
+      <div id="keyReveal" hidden style="margin-top:1.25rem">
+        <div class="alert alert-warning">Copy this API key now. It will not be shown again.</div>
+        <div class="secret-box" id="secretValue"></div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnCopy">Copy key</button>
+      </div>
+      <p style="margin-top:1.25rem">
+        <a class="btn btn-primary" id="btnGoAdmin" href="#">Go to admin login</a>
+      </p>
+    </div>
+  </main>
+
+  <script>
+    const alertEl = document.getElementById('alert');
+    function showAlert(type, msg) {
+      alertEl.hidden = false;
+      alertEl.className = 'alert alert-' + type;
+      alertEl.textContent = msg;
+    }
+    function clearAlert() {
+      alertEl.hidden = true;
+      alertEl.textContent = '';
+    }
+
+    function setStep(n) {
+      document.getElementById('step1').hidden = n !== 1;
+      document.getElementById('step2').hidden = n !== 2;
+      document.getElementById('step3').hidden = n !== 3;
+      document.querySelectorAll('.step-pill').forEach((el) => {
+        const s = Number(el.dataset.step);
+        el.classList.toggle('active', s === n);
+        el.classList.toggle('done', s < n);
+      });
+    }
+
+    fetch('/install/status')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.installed && !d.allowReinstall) {
+          document.body.innerHTML = '<main class="container"><p class="muted">Not found</p></main>';
+        }
+      })
+      .catch(() => {});
+
+    document.getElementById('btnTest').onclick = async () => {
+      clearAlert();
+      const body = {
+        host: document.getElementById('host').value.trim(),
+        port: Number(document.getElementById('port').value),
+        user: document.getElementById('user').value.trim(),
+        password: document.getElementById('password').value,
+        database: document.getElementById('database').value.trim(),
+        createDatabase: document.getElementById('createDatabase').checked,
+      };
+      try {
+        const res = await fetch('/install/test-db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          showAlert('error', data.error || 'Connection failed');
+          document.getElementById('btnNext1').disabled = true;
+          return;
+        }
+        showAlert('success', data.message || 'Connection successful');
+        document.getElementById('btnNext1').disabled = false;
+      } catch (e) {
+        showAlert('error', e.message);
+      }
+    };
+
+    document.getElementById('btnNext1').onclick = () => {
+      clearAlert();
+      setStep(2);
+    };
+    document.getElementById('btnBack2').onclick = () => {
+      clearAlert();
+      setStep(1);
+    };
+
+    document.getElementById('btnInstall').onclick = async () => {
+      clearAlert();
+      const pw = document.getElementById('adminPassword').value;
+      const pw2 = document.getElementById('adminPassword2').value;
+      if (pw.length < 12 || !/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw)) {
+        showAlert('error', 'Password must be at least 12 characters with upper, lower, and numeric characters');
+        return;
+      }
+      if (pw !== pw2) {
+        showAlert('error', 'Passwords do not match');
+        return;
+      }
+      const btn = document.getElementById('btnInstall');
+      btn.disabled = true;
+      btn.textContent = 'Installing…';
+
+      const body = {
+        host: document.getElementById('host').value.trim(),
+        port: Number(document.getElementById('port').value),
+        user: document.getElementById('user').value.trim(),
+        password: document.getElementById('password').value,
+        database: document.getElementById('database').value.trim(),
+        createDatabase: document.getElementById('createDatabase').checked,
+        adminUsername: document.getElementById('adminUsername').value.trim(),
+        adminPassword: pw,
+        adminEmail: document.getElementById('adminEmail').value.trim() || null,
+        createFirstApiKey: document.getElementById('createFirstApiKey').checked,
+        firstKeyName: document.getElementById('firstKeyName').value.trim() || 'Research API Key',
+        instanceIdentity: {
+          apiDisplayName: document.getElementById('apiDisplayName').value.trim() || 'Private API',
+          publicApiBasePath: document.getElementById('publicApiBasePath').value.trim() || undefined,
+          webhookBasePath: document.getElementById('webhookBasePath').value.trim() || undefined,
+          healthPath: document.getElementById('healthPath').value.trim() || undefined,
+          apiKeyPrefix: document.getElementById('apiKeyPrefix').value.trim() || undefined,
+          automationNamespace: document.getElementById('automationNamespace').value.trim() || undefined,
+        },
+      };
+
+      try {
+        const res = await fetch('/install/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showAlert('error', data.error || 'Install failed');
+          btn.disabled = false;
+          btn.textContent = 'Install';
+          return;
+        }
+        clearAlert();
+        setStep(3);
+        const loginPath = data.adminLoginUrl || (data.adminBasePath + '/login');
+        const fullAdmin = location.origin + loginPath;
+        document.getElementById('adminUrlValue').textContent = fullAdmin;
+        document.getElementById('btnGoAdmin').href = loginPath;
+        if (data.instance) {
+          document.getElementById('instanceIdentityReveal').hidden = false;
+          document.getElementById('apiBaseUrlValue').textContent = location.origin + data.instance.publicApiBasePath;
+          document.getElementById('webhookBaseUrlValue').textContent = location.origin + data.instance.webhookBasePath;
+          document.getElementById('healthUrlValue').textContent = location.origin + data.instance.healthPath;
+          document.getElementById('automationNamespaceValue').textContent = data.instance.automationNamespace;
+        }
+        if (data.apiKey && data.apiKey.secret) {
+          document.getElementById('keyReveal').hidden = false;
+          document.getElementById('secretValue').textContent = data.apiKey.secret;
+        }
+      } catch (e) {
+        showAlert('error', e.message);
+        btn.disabled = false;
+        btn.textContent = 'Install';
+      }
+    };
+
+    document.getElementById('btnCopy').onclick = async () => {
+      const text = document.getElementById('secretValue').textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        showAlert('success', 'API key copied to clipboard');
+      } catch {
+        showAlert('warning', 'Could not copy automatically — select the key manually');
+      }
+    };
+
+    document.getElementById('btnCopyAdmin').onclick = async () => {
+      const text = document.getElementById('adminUrlValue').textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        showAlert('success', 'Admin URL copied');
+      } catch {
+        showAlert('warning', 'Copy the admin URL manually');
+      }
+    };
+  </script>
+</body>
+</html>

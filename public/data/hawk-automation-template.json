@@ -1,0 +1,39 @@
+{
+  "format": "hawk-automation-1",
+  "flows": [
+    {
+      "name": "Research workflow",
+      "description": "Manual starter with no external actions or search targets.",
+      "integrationId": null,
+      "graph": {
+        "schemaVersion": 1,
+        "startNodeId": "trigger",
+        "nodes": [
+          {
+            "id": "trigger",
+            "type": "trigger",
+            "name": "Manual start",
+            "config": {
+              "event": "manual"
+            },
+            "nextNodeId": "end",
+            "position": {
+              "x": 100,
+              "y": 50
+            }
+          },
+          {
+            "id": "end",
+            "type": "end",
+            "name": "Complete",
+            "config": {},
+            "position": {
+              "x": 100,
+              "y": 200
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

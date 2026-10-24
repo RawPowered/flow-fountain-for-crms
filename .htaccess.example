@@ -1,0 +1,5 @@
+# Optional Apache Passenger deployment. Set the absolute app directory locally.
+# PassengerAppRoot INSTANCE_ABSOLUTE_APP_ROOT
+# PassengerAppType node
+# PassengerStartupFile server.js
+Options -Indexes

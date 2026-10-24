@@ -1,0 +1,5 @@
+# Optional Apache deployments only. Node does not read this file.
+Options -Indexes
+<FilesMatch "^(\.env|package-lock\.json|package\.json)$">
+  Require all denied
+</FilesMatch>

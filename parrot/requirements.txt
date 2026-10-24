@@ -1,0 +1,1 @@
+# PARROT v1 intentionally uses only the Python 3.12 standard library.

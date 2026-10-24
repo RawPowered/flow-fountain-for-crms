@@ -1,0 +1,58 @@
+{
+  "templateVersion": "song-vibe-1",
+  "services": [
+    {
+      "serviceType": "Research",
+      "languageCode": "en-US",
+      "scriptName": "Research checklist",
+      "description": "Generic checklist starter. Edit before use.",
+      "reason": "Research review",
+      "mainScript": {
+        "identity": {
+          "text": "Review identity.",
+          "type": "statement",
+          "answers": []
+        },
+        "reason": {
+          "text": "Review reason.",
+          "type": "statement",
+          "answers": []
+        },
+        "address": {
+          "text": "Review address.",
+          "type": "statement",
+          "answers": []
+        },
+        "diagnosis": {
+          "text": "Review diagnosis.",
+          "type": "statement",
+          "answers": []
+        },
+        "trust": {
+          "text": "Review trust.",
+          "type": "statement",
+          "answers": []
+        },
+        "appointment": {
+          "text": "Review appointment.",
+          "type": "statement",
+          "answers": []
+        },
+        "confirmation": {
+          "text": "Review confirmation.",
+          "type": "statement",
+          "answers": []
+        },
+        "wrapUp": {
+          "text": "Review wrapUp.",
+          "type": "statement",
+          "answers": []
+        }
+      },
+      "concerns": [],
+      "outcomes": [
+        "Complete"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "osint-research-studio-360-fountain",
+  "version": "0.1.0",
+  "description": "Self-hosted OSINT research, evidence preservation and investigation workbench",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "node src/db/migrate.js",
+    "user:set-password": "node src/db/setUserPassword.js",
+    "sentinel:preflight": "node src/db/sentinelPreflight.js",
+    "test:identity": "node test/instanceIdentity.test.js && node test/apiHelp.test.js",
+    "test:preservation-phase0": "node test/preservationPhase0.test.js",
+    "test:preservation-phase1": "node test/preservationPhase0.test.js && node test/preservationPhase1.test.js",
+    "test:preservation-phase2": "node test/preservationPhase2.test.js",
+    "test:sentinel-ingestion": "node test/sentinelIngestion.test.js",
+    "test:parrot": "node test/parrot.test.js && python -m unittest discover -s parrot -p test_parrot.py",
+    "test": "node scripts/run-tests.js",
+    "test:python": "python -m unittest discover -s parrot -p test_parrot.py",
+    "release:check": "node scripts/release-check.js",
+    "release:pack": "node scripts/release-pack.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "d3": "^7.9.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.19.2",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^8.5.2",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "marked": "^15.0.6",
+    "mysql2": "^3.12.0",
+    "ssh2-sftp-client": "^12.0.1",
+    "topojson-client": "^3.1.0",
+    "us-atlas": "^3.0.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "license": "GPL-3.0-only"
+}

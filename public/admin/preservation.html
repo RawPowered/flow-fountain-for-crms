@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Preservation &amp; Integrations</title>
+  <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    .phase-banner { border-left: 4px solid var(--accent); }
+    .metric-grid { display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:.75rem;margin:1rem 0; }
+    .metric { padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-elevated); }
+    .metric strong { display:block;font-size:1.45rem; }
+    .tabs { display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0; }
+    .tab { border:1px solid var(--border);background:var(--bg-card);color:var(--text);padding:.55rem .8rem;border-radius:var(--radius);cursor:pointer; }
+    .tab.active { border-color:var(--accent);color:var(--accent); }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .item-grid { display:grid;gap:.75rem; }
+    .item { border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;background:var(--bg-elevated); }
+    .item-head { display:flex;justify-content:space-between;align-items:flex-start;gap:1rem; }
+    .item h3 { margin:0 0 .2rem;font-size:1rem; }
+    .meta { color:var(--muted);font: .78rem var(--mono);word-break:break-word; }
+    .actions { display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.65rem; }
+    .form-grid { display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1rem; }
+    .form-grid .full { grid-column:1/-1; }
+    .editor { margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border); }
+    textarea.code { min-height:150px;font-family:var(--mono);font-size:.82rem; }
+    .pill { display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.08rem .42rem;font-size:.72rem; }
+    .pill.good { color:var(--success);border-color:var(--success); }
+    .pill.warn { color:var(--warning);border-color:var(--warning); }
+    .pill.bad { color:var(--danger);border-color:var(--danger); }
+    .locked { opacity:.7; }
+    .callout { padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card); }
+    @media(max-width:900px){.metric-grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand">Control panel</span>
+    <nav class="topbar-nav">
+      <a id="navDash" href="#">Dashboard</a>
+      <a id="navDocs" href="#">Docs</a>
+      <a id="navSentinel" href="#">Sentinel</a>
+      <a href="#" id="logout">Sign out</a>
+    </nav>
+  </header>
+
+  <main class="container container-wide">
+    <div class="admin-header">
+      <div>
+        <h1>Preservation &amp; integrations</h1>
+        <p class="muted">Credential references, source and destination registries, versioned export definitions, and durable job evidence.</p>
+      </div>
+      <button class="btn btn-secondary" id="refresh">Refresh</button>
+    </div>
+
+    <div id="alert" hidden></div>
+    <div class="card phase-banner">
+      <strong>Phase 2 preservation worker</strong>
+      <p class="muted small">Scoped extraction, CSV/XML/XLSX/SQL rendering, encrypted staging, scheduled execution, and live delivery are active. Secret values are write-only and never returned to this page.</p>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric"><span class="muted small">Credentials</span><strong id="mSecrets">0</strong></div>
+      <div class="metric"><span class="muted small">Sources</span><strong id="mSources">0</strong></div>
+      <div class="metric"><span class="muted small">Destinations</span><strong id="mDestinations">0</strong></div>
+      <div class="metric"><span class="muted small">Published definitions</span><strong id="mDefinitions">0</strong></div>
+      <div class="metric"><span class="muted small">Protected jobs</span><strong id="mProtected">0</strong></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-panel="overviewPanel">Overview</button>
+      <button class="tab" data-panel="secretsPanel">Credential vault</button>
+      <button class="tab" data-panel="sourcesPanel">Sources</button>
+      <button class="tab" data-panel="destinationsPanel">Destinations</button>
+      <button class="tab" data-panel="definitionsPanel">Export definitions</button>
+      <button class="tab" data-panel="jobsPanel">Jobs</button>
+      <button class="tab" data-panel="auditPanel">Audit</button>
+    </div>
+
+    <section class="panel active" id="overviewPanel">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Protection posture</h2>
+          <div id="posture"></div>
+        </div>
+        <div class="card">
+          <h2>Control-plane guarantees</h2>
+          <ul class="muted small">
+            <li>Credentials are encrypted and referenced by ID.</li>
+            <li>Definitions are declarative, versioned, and immutable after publication.</li>
+            <li>Jobs use validated state transitions and idempotency keys.</li>
+            <li>Artifacts require SHA-256 verification and delivery evidence.</li>
+            <li>Local staging never qualifies as off-instance protection.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="secretsPanel">
+      <div class="admin-header">
+        <div><h2>Credential vault</h2><p class="muted small">Only root administrators can create, rotate, or retire credentials.</p></div>
+        <button class="btn btn-primary" id="newSecret">New credential</button>
+      </div>
+      <div class="item-grid" id="secretList"></div>
+      <div class="card editor" id="secretEditor" hidden>
+        <h3 id="secretTitle">New credential</h3>
+        <input type="hidden" id="secretId" />
+        <div class="form-grid">
+          <div><label for="secretName">Name</label><input id="secretName" maxlength="128" /></div>
+          <div><label for="secretKind">Kind</label><select id="secretKind"></select></div>
+          <div class="full"><label for="secretValue">Secret value or JSON object</label><textarea class="code" id="secretValue" autocomplete="new-password"></textarea></div>
+          <div><label for="secretHint">Non-secret hint (optional)</label><input id="secretHint" maxlength="16" /></div>
+        </div>
+        <div class="actions"><button class="btn btn-primary" id="saveSecret">Store encrypted value</button><button class="btn btn-secondary" data-close="secretEditor">Cancel</button></div>
+      </div>
+    </section>
+
+    <section class="panel" id="sourcesPanel">
+      <div class="admin-header"><div><h2>Source registry</h2><p class="muted small">References can point at existing CRM/SQL connections or a generic HTTPS API.</p></div><button class="btn btn-primary" id="newSource">New source</button></div>
+      <div class="item-grid" id="sourceList"></div>
+      <div class="card editor" id="sourceEditor" hidden>
+        <h3 id="sourceTitle">Source</h3><input type="hidden" id="sourceId" />
+        <div class="form-grid">
+          <div><label for="sourceSlug">Slug</label><input id="sourceSlug" /></div>
+          <div><label for="sourceName">Name</label><input id="sourceName" /></div>
+          <div><label for="adapterType">Adapter</label><select id="adapterType"></select></div>
+          <div><label for="sourceRefType">Reference type</label><select id="sourceRefType"></select></div>
+          <div><label for="sourceRefId">Existing reference ID</label><input id="sourceRefId" /></div>
+          <div><label for="sourceCredential">Credential reference</label><select id="sourceCredential"></select></div>
+          <div class="full"><label for="sourceBaseUrl">HTTPS base URL (HTTP API only)</label><input id="sourceBaseUrl" /></div>
+          <div class="full"><label for="sourceConfig">Public configuration JSON</label><textarea class="code" id="sourceConfig">{}</textarea></div>
+          <label><input type="checkbox" id="sourceEnabled" checked /> Enabled</label>
+        </div>
+        <div class="actions"><button class="btn btn-primary" id="saveSource">Save source</button><button class="btn btn-secondary" data-close="sourceEditor">Cancel</button></div>
+      </div>
+    </section>
+
+    <section class="panel" id="destinationsPanel">
+      <div class="admin-header"><div><h2>Destination registry</h2><p class="muted small">S3-compatible, SFTP, HTTPS, and local staging definitions.</p></div><button class="btn btn-primary" id="newDestination">New destination</button></div>
+      <div class="item-grid" id="destinationList"></div>
+      <div class="card editor" id="destinationEditor" hidden>
+        <h3 id="destinationTitle">Destination</h3><input type="hidden" id="destinationId" />
+        <div class="form-grid">
+          <div><label for="destinationSlug">Slug</label><input id="destinationSlug" /></div>
+          <div><label for="destinationName">Name</label><input id="destinationName" /></div>
+          <div><label for="destinationType">Type</label><select id="destinationType"></select></div>
+          <div><label for="destinationCredential">Credential reference</label><select id="destinationCredential"></select></div>
+          <div class="full"><label for="destinationConfig">Public configuration JSON</label><textarea class="code" id="destinationConfig">{}</textarea></div>
+          <label><input type="checkbox" id="destinationEnabled" checked /> Enabled</label>
+          <label><input type="checkbox" id="protectionTarget" checked /> Counts as off-instance protection</label>
+        </div>
+        <div class="callout muted small">Examples: S3 <code>{"bucket":"archive","region":"us-east-1","prefix":"exports"}</code>; SFTP <code>{"host":"backup.example.com","port":22,"path":"/exports"}</code>; HTTPS <code>{"url":"https://archive.example.com/ingest"}</code>.</div>
+        <div class="actions"><button class="btn btn-primary" id="saveDestination">Save destination</button><button class="btn btn-secondary" data-close="destinationEditor">Cancel</button></div>
+      </div>
+    </section>
+
+    <section class="panel" id="definitionsPanel">
+      <div class="admin-header"><div><h2>Export definitions</h2><p class="muted small">Mappings and filters are declarative. Raw SQL and executable code are rejected.</p></div><button class="btn btn-primary" id="newDefinition">New definition</button></div>
+      <div class="item-grid" id="definitionList"></div>
+      <div class="card editor" id="definitionEditor" hidden>
+        <h3 id="definitionTitle">Export definition</h3>
+        <input type="hidden" id="definitionId" /><input type="hidden" id="versionId" />
+        <div class="form-grid">
+          <div><label for="definitionSlug">Slug</label><input id="definitionSlug" /></div>
+          <div><label for="definitionName">Name</label><input id="definitionName" /></div>
+          <div><label for="definitionLocation">Location ID (optional)</label><input id="definitionLocation" /></div>
+          <div><label for="definitionDestination">Destination</label><select id="definitionDestination"></select></div>
+          <div><label for="definitionSourceType">Source type</label><select id="definitionSourceType"></select></div>
+          <div><label for="definitionSourceKey">Logical source</label><select id="definitionSourceKey"></select></div>
+          <div><label for="definitionSourceRef">Source reference ID</label><input id="definitionSourceRef" /></div>
+          <div><label for="definitionFormat">Format</label><select id="definitionFormat"></select></div>
+          <div><label for="retentionDays">Artifact retention days</label><input id="retentionDays" type="number" min="1" max="365" value="30" /></div>
+          <div><label for="scheduleCron">Schedule (five-field cron, optional)</label><input id="scheduleCron" placeholder="0 2 * * *" /></div>
+          <div class="full"><label for="definitionDescription">Description</label><input id="definitionDescription" maxlength="1000" /></div>
+          <div class="full"><label for="definitionSourceConfig">Source configuration JSON</label><textarea class="code" id="definitionSourceConfig">{}</textarea></div>
+          <div class="full"><label for="mappings">Field mappings JSON</label><textarea class="code" id="mappings">[{"source":"id","target":"id","type":"string","required":true}]</textarea></div>
+          <div class="full"><label for="filters">Filters JSON</label><textarea class="code" id="filters">[]</textarea></div>
+          <div class="full"><label for="formatConfig">Format configuration JSON</label><textarea class="code" id="formatConfig">{}</textarea></div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="saveDefinition">Save draft</button>
+          <button class="btn btn-secondary" id="validateDefinition" hidden>Validate</button>
+          <button class="btn btn-primary" id="publishDefinition" hidden>Publish</button>
+          <button class="btn btn-secondary" data-close="definitionEditor">Close</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="jobsPanel">
+      <div class="admin-header"><div><h2>Preservation jobs</h2><p class="muted small">The worker extracts, renders, encrypts, delivers, verifies, and records protection evidence.</p></div></div>
+      <div class="item-grid" id="jobList"></div>
+    </section>
+
+    <section class="panel" id="auditPanel">
+      <div class="admin-header"><div><h2>Preservation audit</h2><p class="muted small">Root-only append-only control-plane evidence.</p></div><button class="btn btn-secondary" id="loadAudit">Load audit</button></div>
+      <div class="item-grid" id="auditList"><p class="muted">Select Load audit.</p></div>
+    </section>
+  </main>
+
+  <script>
+    const base = location.pathname.replace(/\/preservation\/?$/, '') || '';
+    const state = { data: null, editingDefinition: null };
+    const $ = (id) => document.getElementById(id);
+    $('navDash').href = base; $('navDocs').href = base + '/docs'; $('navSentinel').href = base + '/sentinel';
+
+    function esc(value) { return String(value == null ? '' : value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function show(type, message) { const el=$('alert');el.hidden=false;el.className='alert alert-'+type;el.textContent=message;window.scrollTo({top:0,behavior:'smooth'}); }
+    function hideAlert(){ $('alert').hidden=true; }
+    function json(id){ try{return JSON.parse($(id).value||'{}');}catch{throw new Error(id+' must contain valid JSON');} }
+    async function api(path, options={}) {
+      const response=await fetch(base+'/api/preservation'+path,{...options,headers:{Accept:'application/json','Content-Type':'application/json',...(options.headers||{})}});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.error||'Request failed');
+      return data;
+    }
+    function option(value,label){return `<option value="${esc(value)}">${esc(label)}</option>`;}
+    function selectOptions(id, items, blankLabel, label=(item)=>item.name){
+      $(id).innerHTML=(blankLabel?option('',blankLabel):'')+items.map((item)=>option(item.id||item,label(item))).join('');
+    }
+    function pill(value){const cls=/published|enabled|active|verified_off_instance|completed|configuration_valid/.test(value)?'good':/failed|retired|cancelled/.test(value)?'bad':'warn';return `<span class="pill ${cls}">${esc(value||'unknown')}</span>`;}
+
+    document.querySelectorAll('.tab').forEach((button)=>button.onclick=()=>{
+      document.querySelectorAll('.tab').forEach((item)=>item.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach((item)=>item.classList.remove('active'));
+      button.classList.add('active');$(button.dataset.panel).classList.add('active');
+    });
+    document.querySelectorAll('[data-close]').forEach((button)=>button.onclick=()=>$(button.dataset.close).hidden=true);
+
+    async function load(){
+      try {
+        state.data=await api('/bootstrap');
+      } catch(error) {
+        if(/authenticated/i.test(error.message)){location.href=base+'/login?next='+encodeURIComponent(base+'/preservation');return;}
+        show('error',error.message);return;
+      }
+      render();
+    }
+
+    function render(){
+      const d=state.data;
+      $('mSecrets').textContent=d.secrets.length;
+      $('mSources').textContent=d.integrations.length;
+      $('mDestinations').textContent=d.destinations.length;
+      $('mDefinitions').textContent=d.definitions.filter((item)=>item.status==='published').length;
+      $('mProtected').textContent=d.jobs.filter((item)=>item.protectionStatus==='verified_off_instance').length;
+      const remote=d.destinations.filter((item)=>item.isEnabled&&item.isProtectionTarget);
+      $('posture').innerHTML=remote.length
+        ? `<p>${pill('destination_ready')} ${remote.length} enabled off-instance protection target(s).</p><p class="muted small">Protection is confirmed per job only after verified artifact delivery.</p>`
+        : `<p>${pill('unprotected')} No enabled off-instance protection destination.</p><p class="muted small">Local staging can hold work temporarily but does not protect this instance.</p>`;
+      $('newSecret').hidden=!d.access.canManageSecrets;
+      $('loadAudit').hidden=!d.access.capabilities.includes('view_audit');
+      selectOptions('secretKind',d.catalogs.secretKinds,null,(item)=>item);
+      ['sourceCredential','destinationCredential'].forEach((id)=>selectOptions(id,d.secrets.filter((item)=>item.status==='active'),'No credential',(item)=>`${item.name} · ${item.kind} · …${item.hint||'set'}`));
+      selectOptions('adapterType',d.catalogs.adapterTypes,null,(item)=>item);
+      selectOptions('sourceRefType',d.catalogs.sourceRefTypes,null,(item)=>item);
+      selectOptions('destinationType',d.catalogs.destinationTypes,null,(item)=>item);
+      selectOptions('definitionDestination',d.destinations.filter((item)=>item.isEnabled),'Select destination');
+      selectOptions('definitionSourceType',d.catalogs.sourceTypes,null,(item)=>item);
+      selectOptions('definitionSourceKey',d.catalogs.sourceCatalog,null,(item)=>item);
+      selectOptions('definitionFormat',d.catalogs.formats,null,(item)=>item.toUpperCase());
+      renderSecrets();renderSources();renderDestinations();renderDefinitions();renderJobs();
+    }
+
+    function renderSecrets(){
+      const list=state.data.secrets;
+      $('secretList').innerHTML=list.length?list.map((item)=>`<div class="item"><div class="item-head"><div><h3>${esc(item.name)}</h3><div class="meta">${esc(item.kind)} · hint …${esc(item.hint||'set')} · version ${item.version}</div></div>${pill(item.status)}</div>${state.data.access.canManageSecrets&&item.status==='active'?`<div class="actions"><button class="btn btn-secondary btn-sm" data-rotate="${esc(item.id)}">Rotate</button><button class="btn btn-danger btn-sm" data-retire="${esc(item.id)}">Retire</button></div>`:''}</div>`).join(''):'<p class="muted">No credential references.</p>';
+      document.querySelectorAll('[data-rotate]').forEach((button)=>button.onclick=()=>openSecret(button.dataset.rotate));
+      document.querySelectorAll('[data-retire]').forEach((button)=>button.onclick=()=>retireSecret(button.dataset.retire));
+    }
+    function openSecret(id=null){
+      const item=state.data.secrets.find((value)=>value.id===id);
+      $('secretEditor').hidden=false;$('secretId').value=id||'';$('secretTitle').textContent=id?'Rotate credential':'New credential';
+      $('secretName').value=item?.name||'';$('secretName').disabled=Boolean(id);$('secretKind').value=item?.kind||'api_key';$('secretKind').disabled=Boolean(id);$('secretValue').value='';$('secretHint').value='';
+      $('secretEditor').scrollIntoView({behavior:'smooth'});
+    }
+    $('newSecret').onclick=()=>openSecret();
+    $('saveSecret').onclick=async()=>{
+      try{
+        const raw=$('secretValue').value.trim();let secret=raw;
+        if(raw.startsWith('{')) secret=JSON.parse(raw);
+        const id=$('secretId').value;
+        if(id) await api('/secrets/'+encodeURIComponent(id)+'/rotate',{method:'POST',body:JSON.stringify({secret,hint:$('secretHint').value})});
+        else await api('/secrets',{method:'POST',body:JSON.stringify({name:$('secretName').value,kind:$('secretKind').value,secret,hint:$('secretHint').value})});
+        $('secretValue').value='';$('secretEditor').hidden=true;show('success',id?'Credential rotated.':'Credential stored.');await load();
+      }catch(error){show('error',error.message);}
+    };
+    async function retireSecret(id){if(!confirm('Retire this credential? Active consumers must be disabled first.'))return;try{await api('/secrets/'+encodeURIComponent(id)+'/retire',{method:'POST',body:'{}'});show('success','Credential retired.');await load();}catch(error){show('error',error.message);}}
+
+    function renderSources(){
+      const list=state.data.integrations;
+      $('sourceList').innerHTML=list.length?list.map((item)=>`<div class="item"><div class="item-head"><div><h3>${esc(item.name)}</h3><div class="meta">${esc(item.slug)} · ${esc(item.adapterType)} · ${esc(item.sourceRefType)}${item.sourceRefId?' · '+esc(item.sourceRefId):''}</div></div>${pill(item.isEnabled?'enabled':'disabled')}</div><div class="actions"><button class="btn btn-primary btn-sm" data-source-edit="${esc(item.id)}">Edit</button><button class="btn btn-secondary btn-sm" data-source-validate="${esc(item.id)}">Validate config</button></div></div>`).join(''):'<p class="muted">No registered sources.</p>';
+      document.querySelectorAll('[data-source-edit]').forEach((button)=>button.onclick=()=>openSource(button.dataset.sourceEdit));
+      document.querySelectorAll('[data-source-validate]').forEach((button)=>button.onclick=()=>validateSource(button.dataset.sourceValidate));
+    }
+    function openSource(id=null){
+      const item=state.data.integrations.find((value)=>value.id===id);$('sourceEditor').hidden=false;$('sourceId').value=id||'';$('sourceTitle').textContent=id?'Edit source':'New source';
+      $('sourceSlug').value=item?.slug||'';$('sourceName').value=item?.name||'';$('adapterType').value=item?.adapterType||'workbench';$('sourceRefType').value=item?.sourceRefType||'core';$('sourceRefId').value=item?.sourceRefId||'';$('sourceBaseUrl').value=item?.baseUrl||'';$('sourceCredential').value=item?.credentialId||'';$('sourceConfig').value=JSON.stringify(item?.config||{},null,2);$('sourceEnabled').checked=item?.isEnabled!==false;
+      $('sourceEditor').scrollIntoView({behavior:'smooth'});
+    }
+    $('newSource').onclick=()=>openSource();
+    $('saveSource').onclick=async()=>{try{const id=$('sourceId').value;const body={slug:$('sourceSlug').value,name:$('sourceName').value,adapterType:$('adapterType').value,sourceRefType:$('sourceRefType').value,sourceRefId:$('sourceRefId').value,baseUrl:$('sourceBaseUrl').value,credentialId:$('sourceCredential').value,config:json('sourceConfig'),isEnabled:$('sourceEnabled').checked};await api('/integrations'+(id?'/'+encodeURIComponent(id):''),{method:id?'PUT':'POST',body:JSON.stringify(body)});$('sourceEditor').hidden=true;show('success','Source saved.');await load();}catch(error){show('error',error.message);}};
+    async function validateSource(id){try{const result=await api('/integrations/'+encodeURIComponent(id)+'/validate',{method:'POST',body:'{}'});show('success',result.validation.message);await load();}catch(error){show('error',error.message);}}
+
+    function renderDestinations(){
+      const list=state.data.destinations;
+      $('destinationList').innerHTML=list.length?list.map((item)=>`<div class="item"><div class="item-head"><div><h3>${esc(item.name)}</h3><div class="meta">${esc(item.slug)} · ${esc(item.destinationType)} · ${item.isProtectionTarget?'off-instance protection':'staging only'}</div></div>${pill(item.isEnabled?'enabled':'disabled')}</div><div class="actions"><button class="btn btn-primary btn-sm" data-dest-edit="${esc(item.id)}">Edit</button><button class="btn btn-secondary btn-sm" data-dest-validate="${esc(item.id)}">Validate config</button></div></div>`).join(''):'<p class="muted">No destinations. Create an off-instance target before publishing definitions.</p>';
+      document.querySelectorAll('[data-dest-edit]').forEach((button)=>button.onclick=()=>openDestination(button.dataset.destEdit));
+      document.querySelectorAll('[data-dest-validate]').forEach((button)=>button.onclick=()=>validateDestination(button.dataset.destValidate));
+    }
+    function openDestination(id=null){const item=state.data.destinations.find((value)=>value.id===id);$('destinationEditor').hidden=false;$('destinationId').value=id||'';$('destinationTitle').textContent=id?'Edit destination':'New destination';$('destinationSlug').value=item?.slug||'';$('destinationName').value=item?.name||'';$('destinationType').value=item?.destinationType||'s3';$('destinationCredential').value=item?.credentialId||'';$('destinationConfig').value=JSON.stringify(item?.config||{},null,2);$('destinationEnabled').checked=item?.isEnabled!==false;$('protectionTarget').checked=item?.isProtectionTarget!==false;$('destinationEditor').scrollIntoView({behavior:'smooth'});}
+    $('newDestination').onclick=()=>openDestination();
+    $('saveDestination').onclick=async()=>{try{const id=$('destinationId').value;const body={slug:$('destinationSlug').value,name:$('destinationName').value,destinationType:$('destinationType').value,credentialId:$('destinationCredential').value,config:json('destinationConfig'),isEnabled:$('destinationEnabled').checked,isProtectionTarget:$('protectionTarget').checked};await api('/destinations'+(id?'/'+encodeURIComponent(id):''),{method:id?'PUT':'POST',body:JSON.stringify(body)});$('destinationEditor').hidden=true;show('success','Destination saved.');await load();}catch(error){show('error',error.message);}};
+    async function validateDestination(id){try{const result=await api('/destinations/'+encodeURIComponent(id)+'/validate',{method:'POST',body:'{}'});show('success',result.validation.message);await load();}catch(error){show('error',error.message);}}
+
+    function renderDefinitions(){
+      const list=state.data.definitions;
+      $('definitionList').innerHTML=list.length?list.map((item)=>`<div class="item"><div class="item-head"><div><h3>${esc(item.name)}</h3><div class="meta">${esc(item.slug)} · ${esc(item.sourceKey)} → ${esc(item.format.toUpperCase())} · retain ${item.retentionDays}d</div></div>${pill(item.status)}</div><div class="actions"><button class="btn btn-primary btn-sm" data-def-edit="${esc(item.id)}">Open</button>${item.status==='published'?`<button class="btn btn-secondary btn-sm" data-run="${esc(item.id)}">Queue export</button><button class="btn btn-secondary btn-sm" data-new-version="${esc(item.id)}">New version</button>`:''}</div></div>`).join(''):'<p class="muted">No export definitions.</p>';
+      document.querySelectorAll('[data-def-edit]').forEach((button)=>button.onclick=()=>openDefinition(button.dataset.defEdit));
+      document.querySelectorAll('[data-run]').forEach((button)=>button.onclick=()=>queueJob(button.dataset.run));
+      document.querySelectorAll('[data-new-version]').forEach((button)=>button.onclick=()=>newVersion(button.dataset.newVersion));
+    }
+    function clearDefinition(){state.editingDefinition=null;$('definitionId').value='';$('versionId').value='';$('definitionSlug').value='';$('definitionName').value='';$('definitionDescription').value='';$('definitionLocation').value='';$('definitionSourceType').value='catalog';$('definitionSourceKey').value='leads_contacts';$('definitionSourceRef').value='';$('definitionDestination').value='';$('definitionFormat').value='csv';$('retentionDays').value='30';$('scheduleCron').value='';$('definitionSourceConfig').value='{}';$('mappings').value='[{"source":"id","target":"id","type":"string","required":true}]';$('filters').value='[]';$('formatConfig').value='{}';$('definitionSlug').disabled=false;$('definitionFormat').disabled=false;$('validateDefinition').hidden=true;$('publishDefinition').hidden=true;}
+    $('newDefinition').onclick=()=>{clearDefinition();$('definitionEditor').hidden=false;$('definitionTitle').textContent='New export definition';$('definitionEditor').scrollIntoView({behavior:'smooth'});};
+    async function openDefinition(id){try{const item=(await api('/definitions/'+encodeURIComponent(id))).definition;state.editingDefinition=item;const version=item.versions.find((v)=>v.status==='draft')||item.versions.find((v)=>v.id===item.currentVersionId)||item.versions[0];$('definitionEditor').hidden=false;$('definitionId').value=item.id;$('versionId').value=version?.id||'';$('definitionTitle').textContent=`${item.name} · version ${version?.version||'?'}`;$('definitionSlug').value=item.slug;$('definitionName').value=item.name;$('definitionDescription').value=item.description||'';$('definitionLocation').value=item.locationId||'';$('definitionSourceType').value=item.sourceType;$('definitionSourceKey').value=item.sourceKey;$('definitionSourceRef').value=item.sourceRefId||'';$('definitionDestination').value=item.destinationId||'';$('definitionFormat').value=item.format;$('retentionDays').value=item.retentionDays;$('scheduleCron').value=item.scheduleCron||'';$('definitionSourceConfig').value=JSON.stringify(version?.sourceConfig||{},null,2);$('mappings').value=JSON.stringify(version?.mappings||[],null,2);$('filters').value=JSON.stringify(version?.filters||[],null,2);$('formatConfig').value=JSON.stringify(version?.formatConfig||{},null,2);const editable=version?.status==='draft';$('definitionSlug').disabled=false;$('definitionFormat').disabled=item.status==='published';$('saveDefinition').disabled=!editable;$('validateDefinition').hidden=!editable;$('publishDefinition').hidden=!editable;$('definitionEditor').scrollIntoView({behavior:'smooth'});}catch(error){show('error',error.message);}}
+    function definitionBody(){return{slug:$('definitionSlug').value,name:$('definitionName').value,description:$('definitionDescription').value,locationId:$('definitionLocation').value,sourceType:$('definitionSourceType').value,sourceKey:$('definitionSourceKey').value,sourceRefId:$('definitionSourceRef').value,destinationId:$('definitionDestination').value,format:$('definitionFormat').value,retentionDays:Number($('retentionDays').value),scheduleCron:$('scheduleCron').value,sourceConfig:json('definitionSourceConfig'),mappings:json('mappings'),filters:json('filters'),formatConfig:json('formatConfig')};}
+    $('saveDefinition').onclick=async()=>{try{const id=$('definitionId').value;const versionId=$('versionId').value;const body=definitionBody();if(!id){const result=await api('/definitions',{method:'POST',body:JSON.stringify(body)});show('success','Draft definition created.');await load();await openDefinition(result.definition.id);}else{await api('/definitions/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify(body)});if(versionId)await api('/versions/'+encodeURIComponent(versionId),{method:'PUT',body:JSON.stringify(body)});show('success','Draft saved.');await load();await openDefinition(id);}}catch(error){show('error',error.message);}};
+    $('validateDefinition').onclick=async()=>{try{const result=await api('/definitions/'+encodeURIComponent($('definitionId').value)+'/versions/'+encodeURIComponent($('versionId').value)+'/validate',{method:'POST',body:'{}'});show('success',`Valid: ${result.validation.mappingCount} mappings · schema ${result.validation.schemaSha256.slice(0,12)}…`);}catch(error){show('error',error.message);}};
+    $('publishDefinition').onclick=async()=>{try{await api('/definitions/'+encodeURIComponent($('definitionId').value)+'/versions/'+encodeURIComponent($('versionId').value)+'/publish',{method:'POST',body:'{}'});$('definitionEditor').hidden=true;show('success','Definition published and immutable.');await load();}catch(error){show('error',error.message);}};
+    async function newVersion(id){try{await api('/definitions/'+encodeURIComponent(id)+'/versions',{method:'POST',body:'{}'});show('success','New draft version created.');await load();await openDefinition(id);}catch(error){show('error',error.message);}}
+    async function queueJob(definitionId){try{const result=await api('/jobs',{method:'POST',body:JSON.stringify({definitionId})});show('success',result.reused?'Existing idempotent job returned.':'Export job queued for Phase 2 worker.');await load();document.querySelector('[data-panel="jobsPanel"]').click();}catch(error){show('error',error.message);}}
+
+    function renderJobs(){const list=state.data.jobs;$('jobList').innerHTML=list.length?list.map((item)=>`<div class="item"><div class="item-head"><div><h3>${esc(item.jobType)} · ${esc(item.id.slice(0,8))}</h3><div class="meta">${esc(item.definitionId||'operations job')} · ${esc(item.queuedAt||'')} · ${item.progressPercent}% · attempt ${item.attemptCount||0}</div></div><div>${pill(item.status)} ${pill(item.protectionStatus)}</div></div><div class="actions"><button class="btn btn-secondary btn-sm" data-job-details="${esc(item.id)}">Details</button>${item.status==='queued'?`<button class="btn btn-danger btn-sm" data-cancel-job="${esc(item.id)}">Cancel</button>`:''}</div><div id="job-${esc(item.id)}" class="muted small"></div></div>`).join(''):'<p class="muted">No preservation jobs.</p>';document.querySelectorAll('[data-cancel-job]').forEach((button)=>button.onclick=()=>cancelJob(button.dataset.cancelJob));document.querySelectorAll('[data-job-details]').forEach((button)=>button.onclick=()=>jobDetails(button.dataset.jobDetails));}
+    async function jobDetails(id){try{const job=(await api('/jobs/'+encodeURIComponent(id))).job;const canDownload=state.data.access.capabilities.includes('download_artifacts');const target=$('job-'+id);target.innerHTML=`<p>Records and encrypted artifacts:</p>${job.artifacts.length?job.artifacts.map((item)=>`<div>${esc(item.logicalName)} · ${item.recordCount} records · ${item.byteCount} bytes · ${esc(item.status)}${canDownload&&item.status==='verified'?` · <a href="${base}/api/preservation/artifacts/${encodeURIComponent(item.id)}/download">Download decrypted copy</a>`:''}</div>`).join(''):'<div>No artifacts yet.</div>'}${job.errorSummary?`<p class="pill bad">${esc(job.errorCode)} · ${esc(job.errorSummary)}</p>`:''}`;}catch(error){show('error',error.message);}}
+    async function cancelJob(id){try{await api('/jobs/'+encodeURIComponent(id)+'/cancel',{method:'POST',body:'{}'});show('success','Job cancelled.');await load();}catch(error){show('error',error.message);}}
+
+    $('loadAudit').onclick=async()=>{try{const events=(await api('/audit?limit=100')).events;$('auditList').innerHTML=events.length?events.map((item)=>`<div class="item"><div class="item-head"><div><h3>${esc(item.action)}</h3><div class="meta">${esc(item.actorType||'unknown')}:${esc(item.actorId||'unknown')} · ${esc(item.entityType)}:${esc(item.entityId||'')} · ${esc(item.createdAt)}</div></div>${pill(item.outcome)}</div></div>`).join(''):'<p class="muted">No audit events.</p>';}catch(error){show('error',error.message);}};
+    $('refresh').onclick=()=>{hideAlert();load();};
+    $('logout').onclick=async(event)=>{event.preventDefault();await fetch(base+'/logout',{method:'POST'});location.href=base+'/login';};
+    load();
+  </script>
+</body>
+</html>

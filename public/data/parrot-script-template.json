@@ -1,0 +1,18 @@
+{
+  "format": "parrot-script-1",
+  "scripts": [
+    {
+      "name": "Research step",
+      "slug": "custom.research-step",
+      "description": "Offline starter; replace with your own reviewed processing logic.",
+      "capabilities": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      },
+      "source": "def run(inputs, context):\n    return {\"status\": \"ready\"}\n",
+      "changeNote": "Blank offline starter."
+    }
+  ]
+}
