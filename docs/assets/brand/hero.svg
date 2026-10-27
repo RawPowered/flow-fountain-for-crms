@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="430" viewBox="0 0 1600 430" role="img" aria-labelledby="title desc">
+<title id="title">Hero</title><desc id="desc">Flow Fountain for CRMs, a self-hosted workflow and integration system. Three stages: connect, automate, review and preserve.</desc>
+<rect width="1600" height="430" fill="#090A0B"/>
+<path d="M0 0h650l-7 7H0z" fill="#D5FF3F"/>
+<path d="M1040 0h200l-165 430H875zM1270 0h150l-165 430h-150zM1490 0h110v430h-275z" fill="#111315"/>
+<path d="M49 61h12l-9 18H40z" fill="#D5FF3F"/>
+<text x="74" y="76" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="3" fill="#B9BEC2">RAWPOWERED / PRODUCT SYSTEMS</text>
+<text x="48" y="165" font-family="Arial,sans-serif" font-size="82" font-weight="700" letter-spacing="-2" fill="#F5F6F7">Flow Fountain</text>
+<text x="52" y="215" font-family="Arial,sans-serif" font-size="25" font-weight="700" letter-spacing="4" fill="#D5FF3F">FOR CRMs</text>
+<text x="52" y="281" font-family="Arial,sans-serif" font-size="28" font-weight="400" letter-spacing="0" fill="#F5F6F7">Connect sources. Design workflows.</text>
+<text x="52" y="320" font-family="Arial,sans-serif" font-size="28" font-weight="400" letter-spacing="0" fill="#B9BEC2">Review activity. Preserve the trail.</text>
+<path d="M50 358h570" stroke="#35383B"/>
+<text x="52" y="391" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="1.5" fill="#D5FF3F">SELF-HOSTED  /  WINDOWS + LINUX  /  v0.1.2 PREVIEW</text>
+<path d="M1010 82h520v260h-520z" fill="#141618" stroke="#35383B" stroke-width="2"/>
+<path d="M1010 82h220l-6 6h-214z" fill="#D5FF3F"/>
+<text x="1040" y="122" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="2" fill="#D5FF3F">OPERATION PATH</text>
+<path d="M1070 184h390M1070 257h390" stroke="#35383B"/>
+<text x="1044" y="168" font-family="Arial,sans-serif" font-size="23" font-weight="700" letter-spacing="0" fill="#D5FF3F">01</text><text x="1100" y="168" font-family="Arial,sans-serif" font-size="27" font-weight="700" letter-spacing="1" fill="#F5F6F7">CONNECT</text>
+<text x="1044" y="242" font-family="Arial,sans-serif" font-size="23" font-weight="700" letter-spacing="0" fill="#D5FF3F">02</text><text x="1100" y="242" font-family="Arial,sans-serif" font-size="27" font-weight="700" letter-spacing="1" fill="#F5F6F7">AUTOMATE</text>
+<text x="1044" y="315" font-family="Arial,sans-serif" font-size="23" font-weight="700" letter-spacing="0" fill="#D5FF3F">03</text><text x="1100" y="315" font-family="Arial,sans-serif" font-size="23" font-weight="700" letter-spacing="1" fill="#F5F6F7">REVIEW + PRESERVE</text>
+<path d="M1480 139l10 10-10 10M1480 212l10 10-10 10M1480 285l10 10-10 10" fill="none" stroke="#D5FF3F" stroke-width="3"/>
+</svg>

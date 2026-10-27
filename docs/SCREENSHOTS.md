@@ -27,6 +27,11 @@ The release check rejects a changed PNG until its reviewed hash is updated.
 PNG files are also restricted to the documentation screenshot directory and
 checked for their file signature and bounded image dimensions.
 
+The README displays branded frames around these five reviewed screenshots.
+The source capture is pasted into each frame without resampling or changing its
+pixels. Selecting a framed image opens the original capture. Both versions have
+their own reviewed hashes in the release manifest.
+
 The screenshot preview server, browser profiles, logs, and intermediate images
 are excluded from the repository and release package. Fictional preview records
 are not installed into the application. The header artwork is a separate SVG

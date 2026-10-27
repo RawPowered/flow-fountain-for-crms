@@ -49,13 +49,33 @@
     "docs/INSTALLATION.md",
     "docs/SCREENSHOTS.md",
     "docs/VERSIONING.md",
-    "docs/assets/fountain-hero.svg",
-    "docs/assets/fountain-mark.svg",
-    "docs/assets/license.svg",
-    "docs/assets/platforms.svg",
-    "docs/assets/preview.svg",
+    "docs/assets/brand/capability-map.svg",
+    "docs/assets/brand/chip-checks.svg",
+    "docs/assets/brand/chip-license.svg",
+    "docs/assets/brand/chip-platforms.svg",
+    "docs/assets/brand/chip-preview.svg",
+    "docs/assets/brand/hero.svg",
+    "docs/assets/brand/mark.svg",
+    "docs/assets/brand/nav-architecture.svg",
+    "docs/assets/brand/nav-profile.svg",
+    "docs/assets/brand/nav-start.svg",
+    "docs/assets/brand/nav-tour.svg",
+    "docs/assets/brand/nav-workspaces.svg",
+    "docs/assets/brand/section-architecture.svg",
+    "docs/assets/brand/section-configuration.svg",
+    "docs/assets/brand/section-purpose.svg",
+    "docs/assets/brand/section-reference.svg",
+    "docs/assets/brand/section-start.svg",
+    "docs/assets/brand/section-tour.svg",
+    "docs/assets/brand/section-workspaces.svg",
+    "docs/assets/brand/system-map.svg",
     "docs/assets/screenshots/blank-installation.png",
     "docs/assets/screenshots/evidence-preservation.png",
+    "docs/assets/screenshots/framed-blank-installation.png",
+    "docs/assets/screenshots/framed-evidence-preservation.png",
+    "docs/assets/screenshots/framed-python-console.png",
+    "docs/assets/screenshots/framed-sentinel-overview.png",
+    "docs/assets/screenshots/framed-workflow-designer.png",
     "docs/assets/screenshots/python-console.png",
     "docs/assets/screenshots/sentinel-overview.png",
     "docs/assets/screenshots/workflow-designer.png",
@@ -325,6 +345,26 @@
     "docs/assets/screenshots/workflow-designer.png": {
       "sha256": "8fbf404a75cfd6195540a6689f218bc84d64623dcb21f16bc8a2a642da4a3c86",
       "reviewed": "Visual review; blank installer or fictional interface preview; no private deployment data."
+    },
+    "docs/assets/screenshots/framed-workflow-designer.png": {
+      "sha256": "bfb3d9bbc3878bcdbaffae78419c5733e0b91210f14693dabe04ce6ea67ec9ee",
+      "reviewed": "Branded frame around unchanged reviewed preview screenshot; original pixels preserved and linked from README."
+    },
+    "docs/assets/screenshots/framed-sentinel-overview.png": {
+      "sha256": "ddd1c4f2a15b8da98861678f772dccc079a5db4dd193f5958d7cc5c48deea151",
+      "reviewed": "Branded frame around unchanged reviewed preview screenshot; original pixels preserved and linked from README."
+    },
+    "docs/assets/screenshots/framed-evidence-preservation.png": {
+      "sha256": "629ea01b6f3fa2ff850dfbd60ebe61b158591693a5f2582c6ef9f9d088c6c6ec",
+      "reviewed": "Branded frame around unchanged reviewed preview screenshot; original pixels preserved and linked from README."
+    },
+    "docs/assets/screenshots/framed-python-console.png": {
+      "sha256": "3a2db13da2139809c2dd6fd7a8bcf2daffcfc40d496fd4dac31b89554e2fe907",
+      "reviewed": "Branded frame around unchanged reviewed preview screenshot; original pixels preserved and linked from README."
+    },
+    "docs/assets/screenshots/framed-blank-installation.png": {
+      "sha256": "c8358c5363beb38825216b7603ebe203c5f15a1bb3d2a30b305a32fd1ad0e62a",
+      "reviewed": "Branded frame around unchanged reviewed preview screenshot; original pixels preserved and linked from README."
     }
   },
   "product": "Flow Fountain for CRMs",
