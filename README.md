@@ -24,7 +24,7 @@ Self-hosted CRM workflows, integrations, operational analytics, and audit contex
 
 </div>
 
-![Flow Fountain capability map: connect CRM, HTTP and SQL sources; design workflows; operate review workspaces; prepare preservation definitions](docs/assets/brand/capability-map.svg)
+![Flow Fountain capability map: connect CRM, HTTP and SQL sources; design workflows; operate review workspaces: prepare preservation definitions](docs/assets/brand/capability-map.svg)
 
 Current release: **v0.1.2 preview**. [Download the source](https://github.com/RawPowered/flow-fountain-for-crms/releases/tag/v0.1.2) · [Product and compatibility versions](docs/VERSIONING.md) · [Installation guide](docs/INSTALLATION.md).
 
@@ -45,7 +45,7 @@ Every installation begins with its own configuration: no deployment domains, cre
 
 <h2 id="product-tour"><img src="docs/assets/brand/section-tour.svg" alt="01 / Product tour" width="100%"></h2>
 
-These browser captures show the Flow Fountain for CRMs interface. The workspace screens use an isolated preview with **fictional data and mocked API responses**; they illustrate the interface rather than completed live operations. The installer capture shows the blank setup screen. Preview records and illustration assets do not configure a fresh installation.
+These browser captures show the Flow Fountain for CRMs interface. The workspace screens use an isolated preview with **fictional data and mocked API responses**: they illustrate the interface rather than completed live operations. The installer capture shows the blank setup screen. Preview records and illustration assets do not configure a fresh installation.
 
 ### Design the steps before you run them
 
